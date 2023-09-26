@@ -11,7 +11,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "nodemon",
-    "lint": "eslint --ext .ts,.tsx src --fix"
+    "lint": "eslint --ext .ts,.tsx,.json . --fix"
   },
   "type": "module",
   "dependencies": {

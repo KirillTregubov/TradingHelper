@@ -1,16 +1,16 @@
-import colorLog from '../log';
-import { PluginOption, build } from 'vite'; 
-import { resolve } from 'path';
-import { outputFolderName } from '../constants';
+import colorLog from '../log'
+import { PluginOption, build } from 'vite'
+import { resolve } from 'path'
+import { outputFolderName } from '../constants'
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 const packages = [
   {
-    content:  resolve(__dirname, '../../', 'src/pages/content/index.tsx')
-  },
-];
+    content: resolve(__dirname, '../../', 'src/pages/content/index.tsx')
+  }
+]
 
-const outDir = resolve(__dirname, '../../',  outputFolderName); 
+const outDir = resolve(__dirname, '../../', outputFolderName)
 
 export default function buildContentScript(): PluginOption {
   return {
@@ -19,7 +19,7 @@ export default function buildContentScript(): PluginOption {
       for (const _package of packages) {
         await build({
           publicDir: false,
-          plugins: [ cssInjectedByJsPlugin() ],
+          plugins: [cssInjectedByJsPlugin()],
           build: {
             outDir,
             sourcemap: process.env.__DEV__ === 'true',
@@ -28,15 +28,15 @@ export default function buildContentScript(): PluginOption {
               input: _package,
               output: {
                 entryFileNames: (chunk) => {
-                  return `src/pages/${chunk.name}/index.js`;
-                },
-              },
-            },
+                  return `src/pages/${chunk.name}/index.js`
+                }
+              }
+            }
           },
-          configFile: false,
-        });
+          configFile: false
+        })
       }
-      colorLog('Content code build sucessfully', 'success');
-    },
-  };
+      colorLog('Content code build sucessfully', 'success')
+    }
+  }
 }
