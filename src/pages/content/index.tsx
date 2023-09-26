@@ -1,21 +1,33 @@
 import { createRoot } from 'react-dom/client'
-import './style.css'
+import css from './style.css?inline'
+import App from './App'
 
-const div = document.createElement('div')
-div.id = '__root'
+const div = document.createElement('section')
+div.id = 'trading-helper-root'
 document.body.appendChild(div)
 
-const rootContainer = document.querySelector('#__root')
-if (!rootContainer) throw new Error("Can't find root element")
-const root = createRoot(rootContainer)
-root.render(
-  <div className="absolute bottom-0 left-0 text-lg text-black bg-amber-400 z-50">
-    content script loaded
-  </div>
-)
+const rootContainer = document.querySelector(`#${div.id}`)
+if (!rootContainer) throw new Error('Error attaching root container')
+
+rootContainer.attachShadow({ mode: 'open' })
+const shadowRoot = rootContainer.shadowRoot
+if (!shadowRoot) throw new Error('Error attaching shadow root')
+
+const shadowRootId = 'trading-helper-shadow-root'
+let shadowRootContainer = shadowRoot.getElementById(shadowRootId)
+shadowRootContainer = document.createElement('div')
+shadowRootContainer.id = shadowRootId
+shadowRoot.appendChild(shadowRootContainer)
+
+const style = document.createElement('style')
+style.textContent = css
+shadowRoot.appendChild(style)
+
+const root = createRoot(shadowRootContainer)
+root.render(<App />)
 
 try {
-  console.log('content script loaded')
+  console.log('Content script loaded')
 } catch (e) {
   console.error(e)
 }
