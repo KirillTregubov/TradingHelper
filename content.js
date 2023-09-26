@@ -14,16 +14,16 @@ function sendMessage(name, params) {
 console.log('Script loaded', state)
 sendMessage('script_loaded', { state })
 
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  if (message === 'action_clicked') {
-    if (!state.enabled) {
-      state.enabled = true
-      console.log(state)
-      sendMessage('enabled', { state })
-      console.log('ENABLED')
-      return
-    }
+// chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+//   if (message === 'action_clicked') {
+//     if (!state.enabled) {
+//       state.enabled = true
+//       console.log(state)
+//       sendMessage('enabled', { state })
+//       console.log('ENABLED')
+//       return
+//     }
 
-    console.log('i can do things')
-  }
-})
+//     console.log('i can do things')
+//   }
+// })

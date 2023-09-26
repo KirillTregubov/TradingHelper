@@ -4,30 +4,25 @@
   "description": "I am a trading helper that helps make da big money!",
   "version": "1.0",
   "icons": {
-    "16": "images/icon-16.png",
-    "32": "images/icon-32.png",
-    "48": "images/icon-48.png",
-    "128": "images/icon-128.png"
+    "128": "images/enabled-128.png"
   },
   "background": {
     "service_worker": "background.js"
   },
   "action": {
     "default_icon": {
-      "16": "images/icon-16.png",
-      "32": "images/icon-32.png",
-      "48": "images/icon-48.png",
-      "128": "images/icon-128.png"
+      "128": "images/disabled-128.png"
     },
-    "default_title": "Open Trading Helper"
+    "default_title": "Trading Helper",
+    "default_popup": "disabled.html"
   },
   "content_scripts": [
     {
-      "matches": ["https://*.google.com/*"],
+      "matches": ["https://*.example.com/*"],
       "js": ["content.js"],
       "run_at": "document_start"
     }
   ],
-  "permissions": ["scripting"],
-  "host_permissions": ["https://*.google.com/*"]
+  "permissions": ["scripting", "tabs"],
+  "host_permissions": ["https://*.example.com/*"]
 }
