@@ -1,7 +1,6 @@
 import colorLog from '../log'
 import { PluginOption, build } from 'vite'
 import { resolve } from 'path'
-import { outputFolderName } from '../constants'
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 const packages = [
@@ -10,7 +9,7 @@ const packages = [
   }
 ]
 
-const outDir = resolve(__dirname, '../../', outputFolderName)
+const outDir = resolve(__dirname, '../../', 'dist')
 
 export default function buildContentScript(): PluginOption {
   return {
