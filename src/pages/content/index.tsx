@@ -9,7 +9,8 @@ document.body.appendChild(div)
 const rootContainer = document.querySelector(`#${div.id}`)
 if (!rootContainer) throw new Error('Error attaching root container')
 
-rootContainer.attachShadow({ mode: 'open' })
+if (rootContainer.shadowRoot === null)
+  rootContainer.attachShadow({ mode: 'open' })
 const shadowRoot = rootContainer.shadowRoot
 if (!shadowRoot) throw new Error('Error attaching shadow root')
 
