@@ -24,11 +24,17 @@
       "version": "detect"
     }
   },
-  "rules": {
-    "react/react-in-jsx-scope": "off"
-  },
   "globals": {
     "chrome": "readonly"
   },
-  "ignorePatterns": ["watch.js", "dist/**"]
+  "ignorePatterns": ["watch.js", "dist/**"],
+  "rules": {
+    "react/react-in-jsx-scope": "off"
+  },
+  "overrides": [
+    {
+      "files": ["*.html"],
+      "parser": "@html-eslint/parser"
+    }
+  ]
 }

@@ -1,9 +1,6 @@
-import React from 'react'
-import '@pages/panel/Panel.css'
-
-export default function Panel(): JSX.Element {
+export default function Panel() {
   return (
-    <div className="container">
+    <div className="text-white">
       <h1>Dev Tools Panel</h1>
     </div>
   )

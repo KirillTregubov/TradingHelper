@@ -1,17 +1,19 @@
-import React from 'react'
 import logo from '@assets/img/logo.svg'
-import '@pages/newtab/Newtab.css'
 
-export default function Newtab(): JSX.Element {
+export default function NewTab() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+    <div className="text-center">
+      <header className="flex min-h-screen flex-col items-center justify-center bg-gray-900 text-white">
+        <img
+          src={logo}
+          className="pointer-events-none h-40 motion-safe:animate-spin-slow"
+          alt="logo"
+        />
         <p>
           Edit <code>src/pages/newtab/Newtab.tsx</code> and save to reload.
         </p>
         <a
-          className="App-link"
+          className="text-blue-400"
           href="https://reactjs.org"
           target="_blank"
           rel="noopener noreferrer"

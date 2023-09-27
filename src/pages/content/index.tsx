@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client'
-import css from './style.css?inline'
+import css from './index.css?inline'
 import App from './App'
 
 const div = document.createElement('section')
