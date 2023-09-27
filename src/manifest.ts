@@ -6,6 +6,9 @@ const manifest: Manifest.WebExtensionManifest = {
   name: packageJson.displayName,
   version: packageJson.version,
   description: packageJson.description,
+  icons: {
+    '128': 'enabled-128.png'
+  },
   // options_ui: {
   //   page: 'src/pages/options/index.html'
   // },
@@ -20,9 +23,6 @@ const manifest: Manifest.WebExtensionManifest = {
   // chrome_url_overrides: {
   //   newtab: 'src/pages/newtab/index.html'
   // },
-  icons: {
-    '128': 'enabled-128.png'
-  },
   content_scripts: [
     {
       matches: ['https://app.fundednext.com/*/trading-platform'],
@@ -32,12 +32,12 @@ const manifest: Manifest.WebExtensionManifest = {
     }
   ],
   // devtools_page: 'src/pages/devtools/index.html',
-  web_accessible_resources: [
-    {
-      resources: ['contentStyle.css', 'icon-128.png', 'icon-34.png'],
-      matches: []
-    }
-  ],
+  // web_accessible_resources: [
+  //   {
+  //     resources: ['contentStyle.css', 'icon-128.png', 'icon-34.png'],
+  //     matches: []
+  //   }
+  // ],
   permissions: ['scripting', 'tabs'],
   host_permissions: ['https://*.fundednext.com/*']
 }

@@ -1,6 +1,6 @@
 import react from '@vitejs/plugin-react-swc'
 import { resolve } from 'path'
-import { defineConfig } from 'vite'
+import { UserConfig, defineConfig } from 'vite'
 import makeManifest from './utils/plugins/make-manifest'
 import buildContentScript from './utils/plugins/build-content-script'
 
@@ -10,15 +10,17 @@ const assetsDir = resolve(root, 'assets')
 const outDir = resolve(__dirname, 'dist')
 const publicDir = resolve(__dirname, 'public')
 
+const resolveDef: UserConfig['resolve'] = {
+  alias: {
+    '@src': root,
+    '@assets': assetsDir,
+    '@pages': pagesDir
+  }
+}
+
 export default defineConfig({
-  resolve: {
-    alias: {
-      '@src': root,
-      '@assets': assetsDir,
-      '@pages': pagesDir
-    }
-  },
-  plugins: [react(), makeManifest(), buildContentScript()],
+  resolve: resolveDef,
+  plugins: [react(), makeManifest(), buildContentScript(resolveDef)],
   publicDir,
   build: {
     outDir,

@@ -1,20 +1,21 @@
 console.log('background script loaded')
 
-// const url = 'https://app.fundednext.com/*/trading-platform'
-// const contentScript = 'src/pages/content/index.js'
-// chrome.tabs.query({ url }, function (tabs) {
-//   for (const tab of tabs) {
-//     if (!tab.id) continue
-//     try {
-//       chrome.scripting.executeScript({
-//         target: { tabId: tab.id },
-//         files: [contentScript]
-//       })
-//     } catch (e) {
-//       console.error('failed injecting tab', tab, e)
-//     }
-//   }
-// })
+const url = 'https://app.fundednext.com/*/trading-platform'
+const contentScript = 'src/pages/content/index.js'
+
+chrome.tabs.query({ url }, function (tabs) {
+  for (const tab of tabs) {
+    if (!tab.id) continue
+    try {
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: [contentScript]
+      })
+    } catch (e) {
+      console.error('failed injecting tab', tab, e)
+    }
+  }
+})
 
 async function clearBadgeText(tabId = undefined) {
   await chrome.action.setBadgeText({

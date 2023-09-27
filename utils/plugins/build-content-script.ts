@@ -1,5 +1,5 @@
 import colorLog from '../log'
-import { PluginOption, build } from 'vite'
+import { PluginOption, UserConfig, build } from 'vite'
 import { resolve } from 'path'
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
@@ -11,12 +11,15 @@ const packages = [
 
 const outDir = resolve(__dirname, '../../', 'dist')
 
-export default function buildContentScript(): PluginOption {
+export default function buildContentScript(
+  resolve: UserConfig['resolve']
+): PluginOption {
   return {
     name: 'build-content',
     async buildEnd() {
       for (const _package of packages) {
         await build({
+          resolve,
           publicDir: false,
           plugins: [cssInjectedByJsPlugin()],
           build: {
