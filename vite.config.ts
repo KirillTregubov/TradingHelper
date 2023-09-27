@@ -22,7 +22,9 @@ export default defineConfig({
   publicDir,
   build: {
     outDir,
-    sourcemap: process.env.__DEV__ === 'true',
+    sourcemap: process.env.NODE_ENV === 'development',
+    minify: process.env.NODE_ENV === 'production',
+    reportCompressedSize: process.env.NODE_ENV === 'production',
     emptyOutDir: false,
     rollupOptions: {
       input: {

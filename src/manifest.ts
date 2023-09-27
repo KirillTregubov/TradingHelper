@@ -1,11 +1,11 @@
 import type { Manifest } from 'webextension-polyfill'
-import pkg from '../package.json'
+import packageJson from '../package.json'
 
 const manifest: Manifest.WebExtensionManifest = {
   manifest_version: 3,
-  name: pkg.displayName,
-  version: pkg.version,
-  description: pkg.description,
+  name: packageJson.displayName,
+  version: packageJson.version,
+  description: packageJson.description,
   // options_ui: {
   //   page: 'src/pages/options/index.html'
   // },

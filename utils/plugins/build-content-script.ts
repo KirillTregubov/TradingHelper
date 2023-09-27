@@ -21,7 +21,9 @@ export default function buildContentScript(): PluginOption {
           plugins: [cssInjectedByJsPlugin()],
           build: {
             outDir,
-            sourcemap: process.env.__DEV__ === 'true',
+            sourcemap: process.env.NODE_ENV === 'development',
+            minify: process.env.NODE_ENV === 'production',
+            reportCompressedSize: process.env.NODE_ENV === 'production',
             emptyOutDir: false,
             rollupOptions: {
               input: _package,
