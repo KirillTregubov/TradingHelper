@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Draggable from 'react-draggable'
 
 function setInputValue(input: HTMLInputElement, value: string) {
@@ -34,20 +34,15 @@ function getTerminal() {
 //   return order.title.split(' ')[0] === 'Show'
 // }
 
-let observing = false
-
-// const observer = new MutationObserver(function (mutations) {
-//   mutations.forEach(function (mutation) {
-//     if (mutation.type === 'attributes' && mutation.attributeName === 'title') {
-//       const newTitle = (mutation.target as Element).getAttribute('title')
-//       console.log('Title changed:', newTitle)
-//     }
-//   })
-// })
-
 export default function App() {
-  // const [started, setStarted] = useState(false)
   const [orderShown, setOrderShown] = useState(false)
+  const [observer, setObserver] = useState<MutationObserver | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (observer) observer.disconnect()
+    }
+  }, [])
 
   function autofill() {
     const terminal = getTerminal()
@@ -73,22 +68,7 @@ export default function App() {
     ) as HTMLDivElement
     if (!orderButton) return
     orderButton.click()
-
-    if (observing) return
-    new MutationObserver(function (mutations) {
-      mutations.forEach(function (mutation) {
-        if (
-          mutation.type === 'attributes' &&
-          mutation.attributeName === 'title'
-        ) {
-          const newTitle = (mutation.target as Element).getAttribute('title')
-          console.log('Title changed:', newTitle)
-          setOrderShown(newTitle?.split(' ')[0] === 'Hide')
-        }
-      })
-    }).observe(orderButton, { attributes: true })
-    observing = true
-
+    setOrderShown(orderButton.title.split(' ')[0] === 'Hide')
     // console.log(orderVisible())
     // if (orderVisible()) {
     //   const terminal = getTerminal()
@@ -107,7 +87,28 @@ export default function App() {
       `div[title$="Trade Form (F9)"]`
     ) as HTMLDivElement
     if (!orderButton) return
-    setOrderShown(orderButton.title.split(' ')[0] === 'Hide')
+
+    if (!observer) {
+      const localObserver = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          if (
+            mutation.type === 'attributes' &&
+            mutation.attributeName === 'title'
+          ) {
+            const newTitle = (mutation.target as Element).getAttribute('title')
+            setOrderShown(newTitle?.split(' ')[0] === 'Hide')
+          }
+        })
+      })
+      setObserver(localObserver)
+      localObserver.observe(orderButton, { attributes: true })
+    }
+
+    if (orderButton.title.split(' ')[0] === 'Hide') {
+      setOrderShown(true)
+      return
+    }
+    toggleOrder()
   }
 
   // function toggleTrading() {
@@ -129,27 +130,23 @@ export default function App() {
           <div className="h-1.5 w-8 rounded-full bg-stone-600" />
         </div>
         <div className="px-5 peer-active:select-none">
+          <h1>
+            Welcome Back,{' '}
+            <span className="font-medium">
+              {import.meta.env.VITE_NAME || 'user'}
+            </span>
+          </h1>
           <div className="flex flex-col">
             <button onClick={autofill}>Autofill Login</button>
-            {/* <button onClick={() => setStarted(!started)}>
-              {started ? 'Stop' : 'Start'} Trading
-            </button>
-            {started && (
-              <> */}
-            <button onClick={toggleOrder}>Toggle Order Menu</button>
-            {/* </>
-            )} */}
             {orderShown ? (
               <>
                 <h1>Trading</h1>
               </>
             ) : (
               <>
-                <h1>Not Trading</h1>
                 <button onClick={refresh}>Start Trading</button>
               </>
             )}
-            {JSON.stringify(orderShown)}
           </div>
         </div>
       </div>

@@ -27,7 +27,8 @@ const manifest: Manifest.WebExtensionManifest = {
     {
       matches: ['https://app.fundednext.com/*/trading-platform'],
       js: ['src/pages/content/index.js'],
-      run_at: 'document_end'
+      run_at: 'document_end',
+      all_frames: false
       // css: ['contentStyle.css']
     }
   ],

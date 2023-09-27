@@ -1,7 +1,8 @@
 import { createRoot } from 'react-dom/client'
-import css from './index.css?inline'
+import contentCSS from './index.css?inline'
 import App from './App'
 import { State, sendMessage } from '@src/helpers'
+import { runtime } from 'webextension-polyfill'
 
 const rootID = 'trading-helper-root'
 if (!document.getElementById(rootID)) {
@@ -32,7 +33,7 @@ const styleId = 'trading-helper-style'
 shadowRoot.getElementById(styleId)?.remove()
 const style = document.createElement('style')
 style.id = styleId
-style.textContent = css
+style.textContent = contentCSS
 shadowRoot.appendChild(style)
 
 const root = createRoot(shadowRootContainer)
