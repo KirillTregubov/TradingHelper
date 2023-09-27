@@ -1,19 +1,19 @@
 {
-  "name": "vite-web-extension",
-  "displayName": "Web Extension Boilerplate",
-  "version": "1.1.0",
-  "description": "A simple chrome extension template with Vite, React, TypeScript and Tailwind CSS.",
+  "name": "trading-helper",
+  "displayName": "Trading Helper",
+  "version": "1.0.0",
+  "description": "I am a trading helper that helps make da big money!",
   "license": "MIT",
+  "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/JohnBra/web-extension.git"
+    "url": "https://github.com/KirillTregubov/trading-helper.git"
   },
   "scripts": {
-    "build": "vite build",
     "dev": "nodemon",
+    "build": "vite build",
     "lint": "eslint --ext .ts,.tsx,.json,.html . --fix"
   },
-  "type": "module",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

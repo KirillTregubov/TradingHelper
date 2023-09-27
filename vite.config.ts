@@ -30,9 +30,10 @@ export default defineConfig({
       input: {
         // devtools: resolve(pagesDir, 'devtools', 'index.html'),
         // panel: resolve(pagesDir, 'panel', 'index.html'),
-        // background: resolve(pagesDir, 'background', 'index.ts'),
-        popup: resolve(pagesDir, 'popup', 'index.html'),
-        newtab: resolve(pagesDir, 'newtab', 'index.html')
+        background: resolve(pagesDir, 'background', 'index.ts'),
+        'popup-disabled': resolve(pagesDir, 'popup-disabled', 'index.html'),
+        'popup-enabled': resolve(pagesDir, 'popup-enabled', 'index.html')
+        // newtab: resolve(pagesDir, 'newtab', 'index.html'),
         // options: resolve(pagesDir, 'options', 'index.html')
       },
       output: {

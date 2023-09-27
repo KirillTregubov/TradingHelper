@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply relative m-0 h-[260px] w-[300px] subpixel-antialiased;
+}
