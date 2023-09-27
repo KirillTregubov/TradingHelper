@@ -12,7 +12,7 @@ dependencies:
     specifier: ^18.2.0
     version: 18.2.0(react@18.2.0)
   vite-plugin-css-injected-by-js:
-    specifier: ^3.1.1
+    specifier: ^3.3.0
     version: 3.3.0(vite@4.4.9)
   webextension-polyfill:
     specifier: ^0.10.0
@@ -26,16 +26,16 @@ devDependencies:
     specifier: ^0.0.246
     version: 0.0.246
   '@types/node':
-    specifier: ^18.11.18
+    specifier: ^18.18.0
     version: 18.18.0
   '@types/react':
-    specifier: ^18.0.27
+    specifier: ^18.2.23
     version: 18.2.23
   '@types/react-dom':
-    specifier: ^18.0.10
+    specifier: ^18.2.7
     version: 18.2.7
   '@types/webextension-polyfill':
-    specifier: ^0.10.0
+    specifier: ^0.10.4
     version: 0.10.4
   '@typescript-eslint/eslint-plugin':
     specifier: ^6.7.3
@@ -44,19 +44,19 @@ devDependencies:
     specifier: ^6.7.3
     version: 6.7.3(eslint@8.50.0)(typescript@5.2.2)
   '@vitejs/plugin-react-swc':
-    specifier: ^3.0.1
+    specifier: ^3.4.0
     version: 3.4.0(vite@4.4.9)
   autoprefixer:
-    specifier: ^10.4.13
+    specifier: ^10.4.16
     version: 10.4.16(postcss@8.4.30)
   eslint:
-    specifier: ^8.32.0
+    specifier: ^8.50.0
     version: 8.50.0
   eslint-config-prettier:
     specifier: ^9.0.0
     version: 9.0.0(eslint@8.50.0)
   eslint-plugin-import:
-    specifier: ^2.27.5
+    specifier: ^2.28.1
     version: 2.28.1(@typescript-eslint/parser@6.7.3)(eslint@8.50.0)
   eslint-plugin-jsx-a11y:
     specifier: ^6.7.1
@@ -65,19 +65,19 @@ devDependencies:
     specifier: ^5.0.0
     version: 5.0.0(eslint-config-prettier@9.0.0)(eslint@8.50.0)(prettier@3.0.3)
   eslint-plugin-react:
-    specifier: ^7.32.1
+    specifier: ^7.33.2
     version: 7.33.2(eslint@8.50.0)
   eslint-plugin-react-hooks:
-    specifier: ^4.3.0
+    specifier: ^4.6.0
     version: 4.6.0(eslint@8.50.0)
   fs-extra:
-    specifier: ^11.1.0
+    specifier: ^11.1.1
     version: 11.1.1
   nodemon:
     specifier: ^3.0.1
     version: 3.0.1
   postcss:
-    specifier: ^8.4.21
+    specifier: ^8.4.30
     version: 8.4.30
   prettier:
     specifier: ^3.0.3
@@ -86,7 +86,7 @@ devDependencies:
     specifier: ^0.5.4
     version: 0.5.4(prettier@3.0.3)
   tailwindcss:
-    specifier: ^3.2.4
+    specifier: ^3.3.3
     version: 3.3.3(ts-node@10.9.1)
   ts-node:
     specifier: ^10.9.1
@@ -95,7 +95,7 @@ devDependencies:
     specifier: ^5.2.2
     version: 5.2.2
   vite:
-    specifier: ^4.0.4
+    specifier: ^4.4.9
     version: 4.4.9(@types/node@18.18.0)
 
 packages:
@@ -310,8 +310,8 @@ packages:
       eslint-visitor-keys: 3.4.3
     dev: true
 
-  /@eslint-community/regexpp@4.8.2:
-    resolution: {integrity: sha512-0MGxAVt1m/ZK+LTJp/j0qF7Hz97D9O/FH9Ms3ltnyIdDD57cbb1ACIQTkbHvNXtWDv5TPq7w5Kq56+cNukbo7g==}
+  /@eslint-community/regexpp@4.9.0:
+    resolution: {integrity: sha512-zJmuCWj2VLBt4c25CfBIbMZLGLyhkvs7LznyVX5HfpzeocThgIj5XQK4L+g3U36mMcx8bPMhGyPpwCATamC4jQ==}
     engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
     dev: true
 
@@ -646,7 +646,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@eslint-community/regexpp': 4.8.2
+      '@eslint-community/regexpp': 4.9.0
       '@typescript-eslint/parser': 6.7.3(eslint@8.50.0)(typescript@5.2.2)
       '@typescript-eslint/scope-manager': 6.7.3
       '@typescript-eslint/type-utils': 6.7.3(eslint@8.50.0)(typescript@5.2.2)
@@ -945,7 +945,7 @@ packages:
     peerDependencies:
       postcss: ^8.1.0
     dependencies:
-      browserslist: 4.21.11
+      browserslist: 4.22.0
       caniuse-lite: 1.0.30001539
       fraction.js: 4.3.6
       normalize-range: 0.1.2
@@ -1005,15 +1005,15 @@ packages:
       fill-range: 7.0.1
     dev: true
 
-  /browserslist@4.21.11:
-    resolution: {integrity: sha512-xn1UXOKUz7DjdGlg9RrUr0GGiWzI97UQJnugHtH0OLDfJB7jMgoIkYvRIEO1l9EeEERVqeqLYOcFBW9ldjypbQ==}
+  /browserslist@4.22.0:
+    resolution: {integrity: sha512-v+Jcv64L2LbfTC6OnRcaxtqJNJuQAVhZKSJfR/6hn7lhnChUXl4amwVviqN1k411BB+3rRoKMitELRn1CojeRA==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001539
       electron-to-chromium: 1.4.530
       node-releases: 2.0.13
-      update-browserslist-db: 1.0.13(browserslist@4.21.11)
+      update-browserslist-db: 1.0.13(browserslist@4.22.0)
     dev: true
 
   /bundle-name@3.0.0:
@@ -1543,7 +1543,7 @@ packages:
     hasBin: true
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@8.50.0)
-      '@eslint-community/regexpp': 4.8.2
+      '@eslint-community/regexpp': 4.9.0
       '@eslint/eslintrc': 2.1.2
       '@eslint/js': 8.50.0
       '@humanwhocodes/config-array': 0.11.11
@@ -3255,13 +3255,13 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /update-browserslist-db@1.0.13(browserslist@4.21.11):
+  /update-browserslist-db@1.0.13(browserslist@4.22.0):
     resolution: {integrity: sha512-xebP81SNcPuNpPP3uzeW1NYXxI3rxyJzF3pD6sH4jE7o/IX+WtSpwnVU+qIsDPyk0d3hmFQ7mjqc6AtV604hbg==}
     hasBin: true
     peerDependencies:
       browserslist: '>= 4.21.0'
     dependencies:
-      browserslist: 4.21.11
+      browserslist: 4.22.0
       escalade: 3.1.1
       picocolors: 1.0.0
     dev: true
