@@ -47,7 +47,6 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   console.log('received message', message)
 
   if (message === 'popup_loaded') {
-    console.log('popup loaded')
     clearBadgeText()
     return
   }
