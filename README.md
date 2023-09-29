@@ -108,6 +108,6 @@ Load the extension in Chrome:
 1. Click "Load unpacked" in the top-left corner, and select the generated `dist` directory.
 
 ## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the GNU GPLv3 License - see the [COPYING](COPYING) file for details.
 
 <div align="right">(<a href="#readme-top">back to top</a>)</div>
