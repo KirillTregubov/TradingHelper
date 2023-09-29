@@ -1,8 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import contentCSS from './index.css?inline'
 import App from './App'
-import { State, sendMessage } from '@src/helpers'
-import { runtime } from 'webextension-polyfill'
 
 const rootID = 'trading-helper-root'
 if (!document.getElementById(rootID)) {
@@ -39,12 +37,8 @@ shadowRoot.appendChild(style)
 const root = createRoot(shadowRootContainer)
 root.render(<App />)
 
-const state: State = {
-  enabled: false
-}
-
 console.log('Content script loaded')
-sendMessage('script_loaded', { state })
+// sendMessage('script_loaded', { state })
 
 // const App = document.getElementById('App')
 // if (!App) throw new Error('Error attaching App')

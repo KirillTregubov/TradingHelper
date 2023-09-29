@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getTerminal, showError } from './helpers'
 import Reload from './Reload'
+import Button from './Button'
 
 export default function Price({
   isLong,
@@ -11,13 +12,14 @@ export default function Price({
 }) {
   const [currentPrice, setCurrentPrice] = useState<null | number>(null)
   const [observer, setObserver] = useState<MutationObserver | null>(null)
-  const [watchingStop, setWatchingStop] = useState<boolean>(false)
+  const [watchingStop, setWatchingStop] = useState(false)
   const [stopPrice, setStopPrice] = useState<null | number>(null)
-  const [riskRatio, setRiskRatio] = useState<number>(2)
-  const [riskAmount, setRiskAmount] = useState<number>(1000)
-  const [refreshing, setRefreshing] = useState<boolean>(false)
+  const [riskRatio, setRiskRatio] = useState(2)
+  const [riskAmount, setRiskAmount] = useState(1000)
+  const [refreshing, setRefreshing] = useState(false)
+  const [animating, setAnimating] = useState(false)
 
-  function inputEventHandler(event: Event) {
+  function stopEventHandler(event: Event) {
     const value = (event.target as HTMLInputElement).value
     if (value === '') {
       setStopPrice(null)
@@ -27,6 +29,7 @@ export default function Price({
   }
 
   function updateStop() {
+    setAnimating(true)
     const terminal = getTerminal()
     if (!terminal) return
     const inputs = terminal.querySelectorAll(
@@ -40,8 +43,6 @@ export default function Price({
     setStopPrice(newValue)
 
     if (!currentPrice) return
-
-    console.log(currentPrice, newValue)
     if (isLong) {
       if (currentPrice <= newValue) {
         changeLong(false)
@@ -56,13 +57,12 @@ export default function Price({
   }
 
   function populateData() {
-    console.log('populating data')
     const terminal = getTerminal()
     if (!terminal) return
 
     const elements = terminal.querySelectorAll('div.price-column')
     if (elements.length !== 2) {
-      console.error('Error finding price elements')
+      showError('finding price')
       return
     }
 
@@ -92,7 +92,7 @@ export default function Price({
       setStopPrice(parseFloat(stop.value))
     }
     if (!watchingStop) {
-      stop.addEventListener('input', inputEventHandler)
+      stop.addEventListener('input', stopEventHandler)
       setWatchingStop(true)
     }
   }
@@ -110,13 +110,10 @@ export default function Price({
       showError('finding stop loss input')
       return
     }
-    console.log(inputs)
-
     const diff = currentPrice - stopPrice
     const profit = (riskRatio * diff + currentPrice).toFixed(2)
     const lotSize = (riskAmount / (diff * 10)).toFixed(2)
-
-    console.log(profit, lotSize)
+    // console.log(profit, lotSize)
 
     const profitInput = inputs[2] as HTMLInputElement
     const lotSizeInput = inputs[0] as HTMLInputElement
@@ -134,6 +131,86 @@ export default function Price({
     lotSizeInput.dispatchEvent(new Event('input', { bubbles: true }))
   }
 
+  function refresh() {
+    const terminal = getTerminal()
+    if (!terminal) return
+    const inputs = terminal.querySelectorAll(
+      'label.input.number-input input[type="text"][inputmode="decimal"]'
+    )
+    if (inputs.length !== 3) return
+    const stopInput = inputs[1] as HTMLInputElement
+    const stopValue = parseFloat(stopInput.value)
+    if (!stopValue) return
+
+    const profitInput = inputs[2] as HTMLInputElement
+    const profitValue = parseFloat(profitInput.value)
+
+    //   console.log('old was long', !isLong)
+    //   console.log('new is long', isLong)
+    // console.log('stop', stopValue)
+
+    const elements = terminal.querySelectorAll('div.price-column')
+    if (elements.length !== 2) return
+
+    const buyPrice = elements[1].textContent?.replace(/\s/g, '')
+    const sellPrice = elements[0].textContent?.replace(/\s/g, '')
+    if (!buyPrice || !sellPrice) return
+    const buyValue = parseFloat(buyPrice)
+    const sellValue = parseFloat(sellPrice)
+    // console.log('buy', buyValue)
+    // console.log('sell', sellValue)
+
+    if (isLong) {
+      if (buyValue >= stopValue) {
+        changeLong(true)
+        return
+      }
+    } else {
+      if (sellValue <= stopValue) {
+        changeLong(false)
+        return
+      }
+    }
+
+    let diff = 0
+    if (isLong) {
+      diff = parseFloat((stopValue - sellValue).toFixed(2))
+    } else {
+      diff = parseFloat((buyValue - stopValue).toFixed(2))
+    }
+    //   console.log('diff', diff)
+
+    stopInput.value = ''
+    stopInput.dispatchEvent(new Event('input', { bubbles: true }))
+
+    let newStopValue = 0
+    if (isLong) {
+      newStopValue = parseFloat((buyValue - diff).toFixed(2))
+    } else {
+      newStopValue = parseFloat((sellValue + diff).toFixed(2))
+    }
+    // console.log('new stop', newStopValue)
+    stopInput.value = newStopValue.toString()
+    stopInput.dispatchEvent(new Event('input', { bubbles: true }))
+
+    setStopPrice(newStopValue)
+
+    if (!profitValue) return
+
+    profitInput.value = ''
+    profitInput.dispatchEvent(new Event('input', { bubbles: true }))
+
+    let newProfitValue = 0
+    if (isLong) {
+      newProfitValue = parseFloat((buyValue + diff * riskRatio).toFixed(2))
+    } else {
+      newProfitValue = parseFloat((sellValue - diff * riskRatio).toFixed(2))
+    }
+    // console.log('new profit', newProfitValue)
+    profitInput.value = newProfitValue.toString()
+    profitInput.dispatchEvent(new Event('input', { bubbles: true }))
+  }
+
   useEffect(() => {
     return () => {
       if (observer) observer.disconnect()
@@ -145,7 +222,7 @@ export default function Price({
         )
         if (inputs.length !== 3) return
         const stop = inputs[1] as HTMLInputElement
-        stop.removeEventListener('input', inputEventHandler)
+        stop.removeEventListener('input', stopEventHandler)
       }
     }
   }, [])
@@ -155,110 +232,39 @@ export default function Price({
 
     populateData()
 
-    if (refreshing) {
-      const terminal = getTerminal()
-      if (!terminal) return
-      const inputs = terminal.querySelectorAll(
-        'label.input.number-input input[type="text"][inputmode="decimal"]'
-      )
-      if (inputs.length !== 3) return
-      const stopInput = inputs[1] as HTMLInputElement
-      const stopValue = parseFloat(stopInput.value)
-      if (!stopValue) return
-
-      const profitInput = inputs[2] as HTMLInputElement
-      const profitValue = parseFloat(profitInput.value)
-
-      //   console.log('old was long', !isLong)
-      //   console.log('new is long', isLong)
-      console.log('stop', stopValue)
-
-      const elements = terminal.querySelectorAll('div.price-column')
-      if (elements.length !== 2) return
-
-      const buyPrice = elements[1].textContent?.replace(/\s/g, '')
-      const sellPrice = elements[0].textContent?.replace(/\s/g, '')
-      if (!buyPrice || !sellPrice) return
-      const buyValue = parseFloat(buyPrice)
-      const sellValue = parseFloat(sellPrice)
-      console.log('buy', buyValue)
-      console.log('sell', sellValue)
-
-      if (isLong) {
-        if (buyValue >= stopValue) {
-          changeLong(true)
-          return
-        }
-      } else {
-        if (sellValue <= stopValue) {
-          changeLong(false)
-          return
-        }
-      }
-
-      let diff = 0
-      if (isLong) {
-        diff = parseFloat((stopValue - sellValue).toFixed(2))
-      } else {
-        diff = parseFloat((buyValue - stopValue).toFixed(2))
-      }
-      //   console.log('diff', diff)
-
-      stopInput.value = ''
-      stopInput.dispatchEvent(new Event('input', { bubbles: true }))
-
-      let newStopValue = 0
-      if (isLong) {
-        newStopValue = parseFloat((buyValue - diff).toFixed(2))
-      } else {
-        newStopValue = parseFloat((sellValue + diff).toFixed(2))
-      }
-      console.log('new stop', newStopValue)
-      stopInput.value = newStopValue.toString()
-      stopInput.dispatchEvent(new Event('input', { bubbles: true }))
-
-      setStopPrice(newStopValue)
-
-      if (!profitValue) return
-
-      profitInput.value = ''
-      profitInput.dispatchEvent(new Event('input', { bubbles: true }))
-
-      let newProfitValue = 0
-      if (isLong) {
-        newProfitValue = parseFloat((buyValue + diff * riskRatio).toFixed(2))
-      } else {
-        newProfitValue = parseFloat((sellValue - diff * riskRatio).toFixed(2))
-      }
-      console.log('new profit', newProfitValue)
-      profitInput.value = newProfitValue.toString()
-      profitInput.dispatchEvent(new Event('input', { bubbles: true }))
-    }
-
+    if (refreshing) refresh()
     setRefreshing(true)
+
     // setup observer
-    // const localObserver = new MutationObserver(function (mutations) {
-    //   mutations.forEach(function (mutation) {
-    //     if (
-    //       mutation.type === 'attributes' &&
-    //       mutation.attributeName === 'title'
-    //     ) {
-    //       const newTitle = (mutation.target as Element).getAttribute('title')
-    //       setOrderShown(newTitle?.split(' ')[0] === 'Hide')
-    //     }
-    //   })
-    // })
-    // setObserver(localObserver)
-    // localObserver.observe(orderButton, { attributes: true })
+    const terminal = getTerminal()
+    if (!terminal) return
+    const elements = terminal.querySelectorAll('div.price-column')
+    if (elements.length !== 2) return
+
+    const priceElement = elements[isLong ? 1 : 0]
+    const localObserver = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        if (mutation.type === 'characterData') {
+          const newPrice = mutation.target.textContent?.replace(/\s/g, '')
+          if (newPrice) setCurrentPrice(parseFloat(newPrice))
+        }
+      })
+    })
+    setObserver(localObserver)
+    localObserver.observe(priceElement, {
+      characterData: true,
+      childList: true,
+      subtree: true
+    })
   }, [isLong])
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-medium">
           Current ({isLong ? 'Buy' : 'Sell'}) Price
         </h2>
-        <span className="select-all">
+        <span className="select-text">
           {currentPrice?.toLocaleString(undefined, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
@@ -268,14 +274,20 @@ export default function Price({
       {watchingStop && (
         <div>
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1">
-              <h2 className="text-sm font-medium">Stop Price</h2>
-              <button onClick={updateStop}>
+            <div className="flex items-center gap-1 text-sm">
+              <h2 className="font-medium">Stop Price</h2>
+              <button
+                onClick={updateStop}
+                className={`rounded-full p-1 hover:bg-stone-700/60 active:bg-stone-800 ${
+                  animating && 'animate-spin'
+                }`}
+                onAnimationEnd={() => setAnimating(false)}
+              >
                 <Reload />
               </button>
             </div>
             {stopPrice ? (
-              <span className="select-all">
+              <span className="select-text">
                 {stopPrice?.toLocaleString(undefined, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
@@ -287,7 +299,7 @@ export default function Price({
           </div>
         </div>
       )}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-medium">Risk / Reward Ratio</h2>
         <input
           type="number"
@@ -303,10 +315,10 @@ export default function Price({
             e.target.value = newVal.toString()
             setRiskRatio(newVal)
           }}
-          className="w-16 rounded-md border border-stone-700 bg-stone-800 px-1 py-0.5 ring-white ring-offset-1 ring-offset-stone-900 hover:ring-2 focus:ring-2 focus:ring-offset-1"
+          className="w-16 rounded-md border border-stone-700 bg-stone-800 px-1 py-0.5 ring-white ring-offset-1 ring-offset-stone-900 hover:ring-2 focus:outline-none focus:ring-2"
         />
       </div>
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-medium">Risk Amount ($)</h2>
         <input
           type="number"
@@ -322,16 +334,16 @@ export default function Price({
             e.target.value = newVal.toString()
             setRiskAmount(newVal)
           }}
-          className="w-24 rounded-md border border-stone-700 bg-stone-800 px-1 py-0.5 ring-white ring-offset-1 ring-offset-stone-900 hover:ring-2 focus:ring-2 focus:ring-offset-1"
+          className="w-24 rounded-md border border-stone-700 bg-stone-800 px-1 py-0.5 ring-white ring-offset-1 ring-offset-stone-900 hover:ring-2 focus:outline-none focus:ring-2"
         />
       </div>
-      <button
-        className="mt-2"
+      <Button
+        fullWidth
         disabled={!currentPrice || !stopPrice}
         onClick={setTrade}
       >
-        Set Trade
-      </button>
+        Update Trade
+      </Button>
     </div>
   )
 }

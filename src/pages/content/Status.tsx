@@ -1,7 +1,7 @@
 export default function Status({ isTrading }: { isTrading: boolean }) {
   return (
     <div
-      className="inline-flex items-center gap-1.5 rounded-full border border-stone-700 bg-stone-800 px-3 py-0.5"
+      className="inline-flex items-center gap-1.5 rounded-full border border-stone-700 bg-stone-800 px-3 py-0.5 text-sm"
       title={isTrading ? 'Order Screen is Open' : 'Order Screen is Hidden'}
     >
       <div

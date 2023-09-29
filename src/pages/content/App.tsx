@@ -3,6 +3,7 @@ import Draggable from 'react-draggable'
 import Status from './Status'
 import Price from './Price'
 import { getTerminal, showError } from './helpers'
+import Button from './Button'
 
 function setInputValue(input: HTMLInputElement, value: string) {
   input.value = value
@@ -10,10 +11,10 @@ function setInputValue(input: HTMLInputElement, value: string) {
 }
 
 export default function App() {
-  const [isTrading, setIsTrading] = useState(true)
+  const [isTrading, setIsTrading] = useState(false)
   const [observer, setObserver] = useState<MutationObserver | null>(null)
   const [isLong, setIsLong] = useState(true)
-  const [showPrice, setShowPrice] = useState(false)
+  const [showMenu, setShowMenu] = useState(true)
 
   useEffect(() => {
     return () => {
@@ -48,7 +49,7 @@ export default function App() {
     setIsTrading(orderButton.title.split(' ')[0] === 'Hide')
   }
 
-  function refresh() {
+  function startTrading() {
     const terminal = getTerminal()
     if (!terminal) return
     const orderButton = terminal.querySelector(
@@ -67,7 +68,7 @@ export default function App() {
             if (newTitle?.split(' ')[0] === 'Hide') {
               setTimeout(() => {
                 setIsTrading(true)
-              }, 100)
+              }, 200)
             } else {
               setIsTrading(false)
             }
@@ -90,11 +91,11 @@ export default function App() {
     if (!terminal) return
     const elements = terminal.querySelectorAll('div.price-column')
     if (elements.length !== 2) {
-      showError('finding prices')
+      showError('opening menu')
       return
     }
 
-    setShowPrice(!showPrice)
+    setShowMenu(!showMenu)
     // const sellPrice = elements[0].textContent
     // const buyPrice = elements[1].textContent
     // console.log(sellPrice, buyPrice)
@@ -109,8 +110,8 @@ export default function App() {
         >
           <div className="h-1.5 w-8 rounded-full bg-stone-600" />
         </div>
-        <div className="px-5 peer-active:select-none">
-          <div className="mb-2 flex items-center justify-between gap-4">
+        <div className="px-4 peer-active:select-none">
+          <div className="mb-3 flex items-center justify-between gap-4">
             <h1 className="text-lg">
               Welcome Back,{' '}
               <span className="font-medium">
@@ -121,24 +122,28 @@ export default function App() {
           </div>
           {isTrading ? (
             <div>
-              <div className="mb-4 flex items-center justify-between gap-4 only:mb-0">
-                <label className="group relative inline-flex cursor-pointer select-none items-center gap-2.5">
-                  <input
-                    type="checkbox"
-                    className="peer sr-only"
-                    checked={isLong}
-                    onChange={(e) => setIsLong(e.target.checked)}
-                  />
-                  <div className="peer h-6 w-11 rounded-full bg-red-700 ring-white ring-offset-1 ring-offset-stone-900 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:border after:border-red-400 after:bg-red-100 after:transition-all after:content-[''] group-hover:ring-2 peer-checked:bg-green-700 peer-checked:after:translate-x-full peer-checked:after:border-green-400 peer-checked:after:bg-green-100 peer-focus:outline-none peer-focus:ring-2"></div>
-                  <span className="font-medium">
-                    {isLong ? 'Long' : 'Short'} Mode
-                  </span>
-                </label>
-                <button onClick={getPrice}>
-                  {showPrice ? 'Close' : 'Open'} Menu
-                </button>
+              <div className="mb-3 flex items-center justify-between gap-3 only:mb-0">
+                {showMenu ? (
+                  <label className="group relative inline-flex cursor-pointer select-none items-center gap-2.5">
+                    <input
+                      type="checkbox"
+                      className="peer sr-only"
+                      checked={isLong}
+                      onChange={(e) => setIsLong(e.target.checked)}
+                    />
+                    <div className="peer h-6 w-11 rounded-full bg-red-700 ring-white ring-offset-1 ring-offset-stone-900 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:border after:border-red-400 after:bg-red-100 after:transition-all after:content-[''] group-hover:ring-2 peer-checked:bg-green-700 peer-checked:after:translate-x-full peer-checked:after:border-green-400 peer-checked:after:bg-green-100 peer-focus:outline-none peer-focus:ring-2" />
+                    <span className="font-medium">
+                      {isLong ? 'Long' : 'Short'} Mode
+                    </span>
+                  </label>
+                ) : (
+                  <div className="w-11" />
+                )}
+                <Button onClick={getPrice}>
+                  {showMenu ? 'Close' : 'Open'} Menu
+                </Button>
               </div>
-              {showPrice && (
+              {showMenu && (
                 <Price
                   isLong={isLong}
                   changeLong={(isLong: boolean) => {
@@ -149,8 +154,8 @@ export default function App() {
             </div>
           ) : (
             <div className="flex items-center justify-between gap-4">
-              <button onClick={autofill}>Autofill Login</button>
-              <button onClick={refresh}>Start Trading</button>
+              <Button onClick={autofill}>Autofill Login</Button>
+              <Button onClick={startTrading}>Start Trading</Button>
             </div>
           )}
         </div>

@@ -16,18 +16,18 @@ const manifest: Manifest.WebExtensionManifest = {
     service_worker: 'src/pages/background/index.js',
     type: 'module'
   },
-  action: {
-    default_popup: 'src/pages/popup-disabled/index.html',
-    default_icon: 'disabled-128.png'
-  },
+  // action: {
+  //   default_popup: 'src/pages/popup-disabled/index.html',
+  //   default_icon: 'disabled-128.png',
+  // },
   // chrome_url_overrides: {
   //   newtab: 'src/pages/newtab/index.html'
   // },
   content_scripts: [
     {
       matches: [
-        'https://app.fundednext.com/*/trading-platform',
-        'https://*.example.com/*'
+        'https://app.fundednext.com/*/trading-platform'
+        // 'https://*.example.com/*'
       ],
       js: ['src/pages/content/index.js'],
       run_at: 'document_end',

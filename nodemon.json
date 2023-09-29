@@ -2,7 +2,13 @@
   "env": {
     "NODE_ENV": "development"
   },
-  "watch": ["src", "utils", "vite.config.ts", ".env.local"],
+  "watch": [
+    "src",
+    "utils",
+    "vite.config.ts",
+    ".env.local",
+    "tailwind.config.ts"
+  ],
   "ext": "tsx,css,html,ts",
   "ignore": ["src/**/*.spec.ts"],
   "exec": "vite build --mode development"
