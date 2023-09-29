@@ -1,42 +1,19 @@
 import { useEffect, useState } from 'react'
 import Draggable from 'react-draggable'
+import Status from './Status'
+import Price from './Price'
+import { getTerminal, showError } from './helpers'
 
 function setInputValue(input: HTMLInputElement, value: string) {
   input.value = value
   input.dispatchEvent(new Event('input', { bubbles: true }))
 }
 
-let terminal: null | Document = null
-
-function getTerminal() {
-  if (terminal) return terminal
-  const iframe = document.querySelector(
-    'iframe[src="https://trade.fundednext.com/terminal"]'
-  ) as HTMLIFrameElement
-  if (!iframe || !iframe.contentWindow) return null
-  try {
-    iframe.contentWindow.document
-  } catch (e) {
-    console.error('Permission denied. Please run Chrome in insecure mode.')
-    return null
-  }
-  terminal = iframe.contentWindow.document
-  return terminal
-}
-
-// function orderVisible() {
-//   const terminal = getTerminal()
-//   if (!terminal) return false
-//   const order = terminal.querySelector(
-//     'div[title$="Trade Form (F9)"]'
-//   ) as HTMLDivElement
-//   if (!order) return false
-//   return order.title.split(' ')[0] === 'Show'
-// }
-
 export default function App() {
-  const [orderShown, setOrderShown] = useState(false)
+  const [isTrading, setIsTrading] = useState(true)
   const [observer, setObserver] = useState<MutationObserver | null>(null)
+  const [isLong, setIsLong] = useState(true)
+  const [showPrice, setShowPrice] = useState(false)
 
   useEffect(() => {
     return () => {
@@ -68,16 +45,7 @@ export default function App() {
     ) as HTMLDivElement
     if (!orderButton) return
     orderButton.click()
-    setOrderShown(orderButton.title.split(' ')[0] === 'Hide')
-    // console.log(orderVisible())
-    // if (orderVisible()) {
-    //   const terminal = getTerminal()
-    //   if (!terminal) return
-    //   const input = terminal.querySelector(
-    //     'label.input.number-input input[type="text"]'
-    //   )
-    //   console.log('input', input)
-    // }
+    setIsTrading(orderButton.title.split(' ')[0] === 'Hide')
   }
 
   function refresh() {
@@ -96,7 +64,13 @@ export default function App() {
             mutation.attributeName === 'title'
           ) {
             const newTitle = (mutation.target as Element).getAttribute('title')
-            setOrderShown(newTitle?.split(' ')[0] === 'Hide')
+            if (newTitle?.split(' ')[0] === 'Hide') {
+              setTimeout(() => {
+                setIsTrading(true)
+              }, 100)
+            } else {
+              setIsTrading(false)
+            }
           }
         })
       })
@@ -105,49 +79,80 @@ export default function App() {
     }
 
     if (orderButton.title.split(' ')[0] === 'Hide') {
-      setOrderShown(true)
+      setIsTrading(true)
       return
     }
     toggleOrder()
   }
 
-  // function toggleTrading() {
-  //   if (!started) {
-  //     const terminal = getTerminal()
-  //     if (!terminal) return
+  function getPrice() {
+    const terminal = getTerminal()
+    if (!terminal) return
+    const elements = terminal.querySelectorAll('div.price-column')
+    if (elements.length !== 2) {
+      showError('finding prices')
+      return
+    }
 
-  //   }
-  //   // () => setStarted(!started)}
-  // }
+    setShowPrice(!showPrice)
+    // const sellPrice = elements[0].textContent
+    // const buyPrice = elements[1].textContent
+    // console.log(sellPrice, buyPrice)
+  }
 
   return (
     <Draggable handle="#DragHandle" bounds="body">
-      <div className="bottom absolute bottom-3 left-3 z-[1000] rounded-lg border border-stone-700 bg-stone-900 pb-4 text-lg text-white shadow-md">
+      <div className="bottom absolute bottom-3 left-3 z-[1000] select-none rounded-lg border border-stone-700 bg-stone-900 pb-4 text-base text-white subpixel-antialiased shadow-md">
         <div
           id="DragHandle"
-          className="peer flex cursor-grab justify-center pb-4 pt-2.5 active:cursor-grabbing"
+          className="peer flex cursor-grab justify-center py-2.5 active:cursor-grabbing"
         >
           <div className="h-1.5 w-8 rounded-full bg-stone-600" />
         </div>
         <div className="px-5 peer-active:select-none">
-          <h1>
-            Welcome Back,{' '}
-            <span className="font-medium">
-              {import.meta.env.VITE_NAME || 'user'}
-            </span>
-          </h1>
-          <div className="flex flex-col">
-            <button onClick={autofill}>Autofill Login</button>
-            {orderShown ? (
-              <>
-                <h1>Trading</h1>
-              </>
-            ) : (
-              <>
-                <button onClick={refresh}>Start Trading</button>
-              </>
-            )}
+          <div className="mb-2 flex items-center justify-between gap-4">
+            <h1 className="text-lg">
+              Welcome Back,{' '}
+              <span className="font-medium">
+                {import.meta.env.VITE_NAME || 'user'}
+              </span>
+            </h1>
+            <Status isTrading={isTrading} />
           </div>
+          {isTrading ? (
+            <div>
+              <div className="mb-4 flex items-center justify-between gap-4 only:mb-0">
+                <label className="group relative inline-flex cursor-pointer select-none items-center gap-2.5">
+                  <input
+                    type="checkbox"
+                    className="peer sr-only"
+                    checked={isLong}
+                    onChange={(e) => setIsLong(e.target.checked)}
+                  />
+                  <div className="peer h-6 w-11 rounded-full bg-red-700 ring-white ring-offset-1 ring-offset-stone-900 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:border after:border-red-400 after:bg-red-100 after:transition-all after:content-[''] group-hover:ring-2 peer-checked:bg-green-700 peer-checked:after:translate-x-full peer-checked:after:border-green-400 peer-checked:after:bg-green-100 peer-focus:outline-none peer-focus:ring-2"></div>
+                  <span className="font-medium">
+                    {isLong ? 'Long' : 'Short'} Mode
+                  </span>
+                </label>
+                <button onClick={getPrice}>
+                  {showPrice ? 'Close' : 'Open'} Menu
+                </button>
+              </div>
+              {showPrice && (
+                <Price
+                  isLong={isLong}
+                  changeLong={(isLong: boolean) => {
+                    setIsLong(isLong)
+                  }}
+                />
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center justify-between gap-4">
+              <button onClick={autofill}>Autofill Login</button>
+              <button onClick={refresh}>Start Trading</button>
+            </div>
+          )}
         </div>
       </div>
     </Draggable>

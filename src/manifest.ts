@@ -25,7 +25,10 @@ const manifest: Manifest.WebExtensionManifest = {
   // },
   content_scripts: [
     {
-      matches: ['https://app.fundednext.com/*/trading-platform'],
+      matches: [
+        'https://app.fundednext.com/*/trading-platform',
+        'https://*.example.com/*'
+      ],
       js: ['src/pages/content/index.js'],
       run_at: 'document_end',
       all_frames: false
@@ -39,7 +42,7 @@ const manifest: Manifest.WebExtensionManifest = {
   //     matches: []
   //   }
   // ],
-  permissions: ['scripting', 'tabs'],
+  permissions: ['tabs'],
   host_permissions: ['https://*.fundednext.com/*']
 }
 
