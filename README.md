@@ -34,11 +34,11 @@ Currently only supported on the [FundedNext Trading Platform](https://fundednext
 
 ## Features
 
-- Customizable Risk Management: Tailor your trading strategy by setting Stop Loss, Risk/Reward Ratio, and dollar Risk Amount.
-- Automated Calculations: Save time and reduce trading errors with automatic Lot Size and Take Profit calculations.
-- Long and Short Modes: Seamlessly switch between Long and Short modes, automatically adjusting Stop Loss and Take Profit levels based on the appropriate price and mode.
-- Movable Window: Use the top bar to drag the window anywhere on the screen for improved usability.
-- Effortless Integration: Seamlessly integrate Trading Helper into Chrome for a hassle-free trading experience.
+- **Customizable Risk Management**: Tailor your trading strategy by setting Stop Loss, Risk/Reward Ratio, and dollar Risk Amount.
+- **Automated Calculations**: Save time and reduce trading errors with automatic Lot Size and Take Profit calculations.
+- **Long and Short Modes**: Seamlessly switch between Long and Short modes, automatically adjusting Stop Loss and Take Profit levels based on the appropriate price and mode.
+- **Movable Window**: Use the top bar to drag the window anywhere on the screen for improved usability.
+- **Effortless Integration**: Seamlessly integrate Trading Helper into Chrome for a hassle-free trading experience.
 
 Enhance your trading strategy and take control of your risk management with Trading Helper, the essential tool for traders of all levels.
 
