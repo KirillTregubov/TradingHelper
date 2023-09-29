@@ -101,6 +101,12 @@ Enhance your trading strategy and take control of your risk management with Trad
 
 ## Installation
 
+Launch a special instance of Chrome with disabled security by running the following command in your terminal (on Windows):
+
+```bash
+./chrome.exe --disable-web-security --no-first-run --user-data-dir="C:\ProgramData\AAA Dev Session"
+```
+
 Load the extension in Chrome:
 
 1. Open Chrome and navigate to chrome://extensions/.
