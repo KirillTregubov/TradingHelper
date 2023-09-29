@@ -2,7 +2,7 @@
 2. Open the folder in File Explorer and double-click on Trading.bat to open the special Chrome instance.
 3. Click on the three dots in the top right corner and select Extensions > Manage Extensions.
 4. Enable Developer Mode in the top right corner.
-5. Click on Load Unpacked and select the dist folder from the extracted extension.zip (you must be in the folder).
+5. Click on Load Unpacked in the top right corner, and select the dist folder from the extracted extension.zip (you must be in the folder).
 6. The extension should now be installed and show up as "Trading Helper 1.0.0".
 7. When you go to the Trading Platform page, the extension should automatically load a window in the bottom left corner.
 

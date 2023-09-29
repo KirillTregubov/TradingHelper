@@ -6,7 +6,7 @@ export default function NewTab() {
       <header className="flex min-h-screen flex-col items-center justify-center bg-gray-900 text-white">
         <img
           src={logo}
-          className="pointer-events-none h-40 motion-safe:animate-spin-slow"
+          className="motion-safe:animate-spin-slow pointer-events-none h-40"
           alt="logo"
         />
         <p>
