@@ -68,8 +68,6 @@ Enhance your trading strategy and take control of your risk management with Trad
 1. Create an `.env.local` file in the root directory with the following contents:
 
    ```bash
-   VITE_LOGIN="" # Your FundedNext Log In
-   VITE_PASSWORD="" # Your FundedNext Master Password
    VITE_NAME="" # Your Name
    ```
 

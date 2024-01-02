@@ -30,9 +30,8 @@ const manifest: Manifest.WebExtensionManifest = {
         // 'https://*.example.com/*'
       ],
       js: ['src/pages/content/index.js'],
-      run_at: 'document_end',
+      run_at: 'document_idle',
       all_frames: false
-      // css: ['contentStyle.css']
     }
   ],
   // devtools_page: 'src/pages/devtools/index.html',

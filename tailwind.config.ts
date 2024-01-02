@@ -5,7 +5,8 @@ export default {
   theme: {
     extend: {
       animation: {
-        spin: 'spin 500ms ease-in-out 1'
+        spin: 'spin 1s linear infinite',
+        rotate: 'spin 500ms ease-in-out 1'
       }
     }
   }
