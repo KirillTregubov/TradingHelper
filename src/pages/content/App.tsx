@@ -102,8 +102,8 @@ export default function App() {
           {isTrading ? (
             <div>
               <div className="mb-3 flex items-center justify-between gap-3 only:mb-0">
-                {showMenu ? (
-                  <label className="group relative inline-flex cursor-pointer select-none items-center gap-2.5">
+                {showMenu && (
+                  <label className="group relative inline-flex flex-shrink-0 cursor-pointer select-none items-center gap-2.5">
                     <input
                       type="checkbox"
                       className="peer sr-only"
@@ -115,11 +115,9 @@ export default function App() {
                       {isLong ? 'Long' : 'Short'} Mode
                     </span>
                   </label>
-                ) : (
-                  <div className="w-11" />
                 )}
-                <Button onClick={getPrice}>
-                  {showMenu ? 'Close' : 'Open'} Menu
+                <Button onClick={getPrice} fullWidth>
+                  {showMenu ? 'Stop' : 'Start'} Trading
                 </Button>
               </div>
               {showMenu && (
@@ -133,7 +131,9 @@ export default function App() {
             </div>
           ) : (
             <div className="flex items-center justify-between gap-4">
-              <Button onClick={startTrading}>Start Trading</Button>
+              <Button onClick={startTrading} fullWidth>
+                Start Trading
+              </Button>
             </div>
           )}
         </div>
