@@ -10,14 +10,17 @@ export default function Price({
   isLong: boolean
   changeLong: (isLong: boolean) => void
 }) {
+  const [contractSize, setContractSize] = useState<null | number>(null)
   const [currentPrice, setCurrentPrice] = useState<null | number>(null)
+  const [decimalPlaces, setDecimalPlaces] = useState(2)
   const [observer, setObserver] = useState<MutationObserver | null>(null)
   const [watchingStop, setWatchingStop] = useState(false)
   const [stopPrice, setStopPrice] = useState<null | number>(null)
   const [riskRatio, setRiskRatio] = useState(2)
   const [riskAmount, setRiskAmount] = useState(1000)
   const [refreshing, setRefreshing] = useState(false)
-  const [animating, setAnimating] = useState(false)
+  const [isStopChanging, setIsStopChanging] = useState(false)
+  const [isContractChanging, setIsContractChanging] = useState(false)
 
   function stopEventHandler(event: Event) {
     const value = (event.target as HTMLInputElement).value
@@ -29,7 +32,7 @@ export default function Price({
   }
 
   function updateStop() {
-    setAnimating(true)
+    setIsStopChanging(true)
     const terminal = getTerminal()
     if (!terminal) return
     const inputs = terminal.querySelectorAll(
@@ -56,6 +59,44 @@ export default function Price({
     }
   }
 
+  function updateContract() {
+    setIsContractChanging(true)
+
+    const volume = 1
+
+    const terminal = getTerminal()
+    if (!terminal) return
+
+    const inputs = terminal.querySelectorAll(
+      'label.input.number-input input[type="text"][inputmode="decimal"]'
+    )
+    if (inputs.length !== 3) {
+      showError('finding inputs')
+      return
+    }
+
+    const lotSizeInput = inputs[0] as HTMLInputElement
+
+    lotSizeInput.value = ''
+    lotSizeInput.dispatchEvent(new Event('input', { bubbles: true }))
+
+    lotSizeInput.value = volume.toString()
+    lotSizeInput.dispatchEvent(new Event('input', { bubbles: true }))
+
+    setTimeout(() => {
+      const textbox = terminal.querySelector(
+        'div[slot="label"] > span:last-child'
+      )
+      const regex = /(\d{1,3}(?:[ ,]\d{3})*(?:\.\d+)?)/
+      const value = textbox?.textContent?.match(regex)?.[0].replace(/[ ]/g, '')
+      const newLotSize = parseFloat(value || '0')
+      setContractSize(newLotSize / volume)
+
+      lotSizeInput.value = ''
+      lotSizeInput.dispatchEvent(new Event('input', { bubbles: true }))
+    }, 500)
+  }
+
   function populateData() {
     const terminal = getTerminal()
     if (!terminal) return
@@ -69,9 +110,11 @@ export default function Price({
     try {
       if (isLong) {
         const price = elements[1].textContent?.replace(/\s/g, '')
+        setDecimalPlaces(price?.split('.')[1].length || 0)
         if (price) setCurrentPrice(parseFloat(price))
       } else {
         const price = elements[0].textContent?.replace(/\s/g, '')
+        setDecimalPlaces(price?.split('.')[1].length || 0)
         if (price) setCurrentPrice(parseFloat(price))
       }
     } catch (e) {
@@ -98,7 +141,7 @@ export default function Price({
   }
 
   function setTrade() {
-    if (!currentPrice || !stopPrice) return
+    if (!currentPrice || !stopPrice || !contractSize) return
 
     const terminal = getTerminal()
     if (!terminal) return
@@ -107,28 +150,27 @@ export default function Price({
       'label.input.number-input input[type="text"][inputmode="decimal"]'
     )
     if (inputs.length !== 3) {
-      showError('finding stop loss input')
+      showError('finding inputs')
       return
     }
     const diff = currentPrice - stopPrice
-    const profit = (riskRatio * diff + currentPrice).toFixed(2)
-    const lotSize = (riskAmount / (diff * 10)).toFixed(2)
-    // console.log(profit, lotSize)
+    const profit = (riskRatio * diff + currentPrice).toFixed(decimalPlaces)
+    const volume = (riskAmount / (diff * contractSize)).toFixed(2)
 
     const profitInput = inputs[2] as HTMLInputElement
-    const lotSizeInput = inputs[0] as HTMLInputElement
+    const volumeInput = inputs[0] as HTMLInputElement
 
     profitInput.value = ''
     profitInput.dispatchEvent(new Event('input', { bubbles: true }))
 
-    lotSizeInput.value = ''
-    lotSizeInput.dispatchEvent(new Event('input', { bubbles: true }))
+    volumeInput.value = ''
+    volumeInput.dispatchEvent(new Event('input', { bubbles: true }))
 
     profitInput.value = profit
     profitInput.dispatchEvent(new Event('input', { bubbles: true }))
 
-    lotSizeInput.value = lotSize
-    lotSizeInput.dispatchEvent(new Event('input', { bubbles: true }))
+    volumeInput.value = volume
+    volumeInput.dispatchEvent(new Event('input', { bubbles: true }))
   }
 
   function refresh() {
@@ -174,9 +216,9 @@ export default function Price({
 
     let diff = 0
     if (isLong) {
-      diff = parseFloat((stopValue - sellValue).toFixed(2))
+      diff = parseFloat((stopValue - sellValue).toFixed(decimalPlaces))
     } else {
-      diff = parseFloat((buyValue - stopValue).toFixed(2))
+      diff = parseFloat((buyValue - stopValue).toFixed(decimalPlaces))
     }
     //   console.log('diff', diff)
 
@@ -185,9 +227,9 @@ export default function Price({
 
     let newStopValue = 0
     if (isLong) {
-      newStopValue = parseFloat((buyValue - diff).toFixed(2))
+      newStopValue = parseFloat((buyValue - diff).toFixed(decimalPlaces))
     } else {
-      newStopValue = parseFloat((sellValue + diff).toFixed(2))
+      newStopValue = parseFloat((sellValue + diff).toFixed(decimalPlaces))
     }
     // console.log('new stop', newStopValue)
     stopInput.value = newStopValue.toString()
@@ -212,6 +254,8 @@ export default function Price({
   }
 
   useEffect(() => {
+    updateContract()
+
     return () => {
       if (observer) observer.disconnect()
       if (watchingStop) {
@@ -266,8 +310,8 @@ export default function Price({
         </h2>
         <span className="select-text">
           {currentPrice?.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
+            minimumFractionDigits: decimalPlaces,
+            maximumFractionDigits: decimalPlaces
           })}
         </span>
       </div>
@@ -279,9 +323,9 @@ export default function Price({
               <button
                 onClick={updateStop}
                 className={`rounded-full p-1 hover:bg-stone-700/60 active:bg-stone-800 ${
-                  animating && 'animate-spin'
+                  isStopChanging && 'animate-rotate'
                 }`}
-                onAnimationEnd={() => setAnimating(false)}
+                onAnimationEnd={() => setIsStopChanging(false)}
               >
                 <Reload />
               </button>
@@ -289,8 +333,8 @@ export default function Price({
             {stopPrice ? (
               <span className="select-text">
                 {stopPrice?.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
+                  minimumFractionDigits: decimalPlaces,
+                  maximumFractionDigits: decimalPlaces
                 })}
               </span>
             ) : (
@@ -299,6 +343,40 @@ export default function Price({
           </div>
         </div>
       )}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1 text-sm">
+          <h2 className="font-medium">Contract Size</h2>
+          {contractSize && (
+            <button
+              onClick={updateContract}
+              className={`rounded-full p-1 hover:bg-stone-700/60 active:bg-stone-800 ${
+                isContractChanging && 'animate-rotate'
+              }`}
+              onAnimationEnd={() => setIsContractChanging(false)}
+            >
+              <Reload />
+            </button>
+          )}
+        </div>
+        {contractSize ? (
+          <span className="select-text">{contractSize}</span>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="1em"
+            height="1em"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="my-1 animate-spin"
+          >
+            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+          </svg>
+        )}
+      </div>
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-medium">Risk / Reward Ratio</h2>
         <input
@@ -339,7 +417,16 @@ export default function Price({
       </div>
       <Button
         fullWidth
-        disabled={!currentPrice || !stopPrice}
+        disabled={!currentPrice || !stopPrice || !contractSize}
+        title={
+          !currentPrice
+            ? 'Current Price is missing'
+            : !stopPrice
+              ? 'Stop Price is missing'
+              : !contractSize
+                ? 'Contract Size is missing'
+                : ''
+        }
         onClick={setTrade}
       >
         Update Trade

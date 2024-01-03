@@ -5,11 +5,6 @@ import Price from './Price'
 import { getTerminal, showError } from './helpers'
 import Button from './Button'
 
-function setInputValue(input: HTMLInputElement, value: string) {
-  input.value = value
-  input.dispatchEvent(new Event('input', { bubbles: true }))
-}
-
 export default function App() {
   const [isTrading, setIsTrading] = useState(false)
   const [observer, setObserver] = useState<MutationObserver | null>(null)
@@ -21,22 +16,6 @@ export default function App() {
       if (observer) observer.disconnect()
     }
   }, [])
-
-  function autofill() {
-    const terminal = getTerminal()
-    if (!terminal) return
-    const passwordInput = terminal.querySelector(
-      'input[name="password"]'
-    ) as HTMLInputElement
-    if (!passwordInput) return
-    setInputValue(passwordInput, import.meta.env.VITE_PASSWORD)
-
-    const loginInput = terminal.querySelector(
-      'input[name="login"]'
-    ) as HTMLInputElement
-    if (!loginInput) return
-    setInputValue(loginInput, import.meta.env.VITE_LOGIN)
-  }
 
   function toggleOrder() {
     const terminal = getTerminal()
@@ -154,7 +133,6 @@ export default function App() {
             </div>
           ) : (
             <div className="flex items-center justify-between gap-4">
-              <Button onClick={autofill}>Autofill Login</Button>
               <Button onClick={startTrading}>Start Trading</Button>
             </div>
           )}

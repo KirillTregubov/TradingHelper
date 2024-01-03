@@ -9,6 +9,11 @@ if (!document.getElementById(rootID)) {
   document.body.appendChild(div)
 }
 
+const injectStyle = document.createElement('style')
+injectStyle.textContent =
+  '.react-draggable-transparent-selection iframe {pointer-events: none;}'
+document.body.appendChild(injectStyle)
+
 const rootContainer = document.querySelector(`#${rootID}`)
 if (!rootContainer) throw new Error('Error attaching root container')
 
